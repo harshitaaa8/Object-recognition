@@ -1,4 +1,4 @@
-# Object-recognition-
+# Object-Recognition
 
 Recognizes objects using webcam of the device
 
