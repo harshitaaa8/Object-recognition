@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>upload image</title>
+    <link rel="stylesheet" href="/upload img/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+</head>
+<body>
+    <div class="main-content">
+    <div class="container">
+        <h1>IMAGE CLASSIFIER BY UPLOADING IMAGE</h1>
+        <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="displayImage();">
+        <button onclick="document.getElementById('imageInput').click();">Upload Image</button>
+        <button onclick="classifyImage();">Classify Image</button>
+        <button onclick="resetImage();">Reset</button>
+        <div class="image-container">
+            <img id="img" crossorigin width="500" height="450">
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div id="result" class="result-container"></div>
+    </div>
+</div>
+
+    <script src="/upload img/script.js"></script>
+</body>
+
+</html>
