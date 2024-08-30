@@ -1,5 +1,6 @@
 let net;
-let modelLoaded = false;
+let result;
+//let modelLoaded = false;
 
 const imgEl = document.getElementById('img');
 const resultEl = document.getElementById('result');
@@ -16,7 +17,7 @@ imageInput.addEventListener('change', function (e) {
 async function loadModel() {
     try {
         net = await mobilenet.load();
-        modelLoaded = true;
+        //modelLoaded = true;
     } catch (e) {
         console.error('Failed to load the model:', e);
     }
@@ -70,11 +71,11 @@ async function classifyImage() {
 }
 
 function resetImage() {
-    imgEl.src = ''; // Limpia la imagen
-    resultEl.innerHTML = ''; // Limpia las predicciones
-    progressBar.style.width = '0%'; // Restablece la barra de progreso
+    imgEl.src = ''; // Clear img
+    progressBar.style.width = '0%'; // Reset progress bar
     progressBar.innerHTML = '0%';
+    resultE1.innerHTML = ''; // Clear predictions
 }
 
-// Llama a la función para cargar el modelo al cargar la página.
+// Call function to load model
 loadModel();

@@ -1,3 +1,4 @@
+// defining the constraints
 const STATUS = document.getElementById('status');
 const VIDEO = document.getElementById('webcam');
 const ENABLE_CAM_BUTTON = document.getElementById('enableCam');
@@ -8,6 +9,7 @@ const MOBILE_NET_INPUT_HEIGHT = 224;
 const STOP_DATA_GATHER = -1;
 const CLASS_NAMES = [];
 
+//adding key buttons
 ENABLE_CAM_BUTTON.addEventListener('click', enableCam);
 TRAIN_BUTTON.addEventListener('click', trainAndPredict);
 RESET_BUTTON.addEventListener('click', reset);
@@ -33,6 +35,9 @@ function enableCam() {
         videoPlaying = true;
         ENABLE_CAM_BUTTON.classList.add('removed');
       });
+    }).catch(function(error) {
+      console.error('Error accessing the webcam:', error);
+      alert('Could not access the webcam. Please check if it is connected and allowed to be accessed by the browser.');
     });
   } else {
     console.warn('getUserMedia() is not supported by your browser');
@@ -61,6 +66,8 @@ async function trainAndPredict() {
 function logProgress(epoch, logs) {
   console.log('Data for epoch ' + epoch, logs);
 }
+
+// main loop for the prediction
 function predictLoop() {
   if (predict) {
     tf.tidy(function() {
@@ -80,7 +87,7 @@ function predictLoop() {
   }
 }
 
-
+// used to purge data and start over
 function reset() {
   predict = false;
   examplesCount.length = 0;
@@ -97,21 +104,32 @@ function reset() {
 
 let dataCollectorButtons = document.querySelectorAll('button.dataCollector');
 for (let i = 0; i < dataCollectorButtons.length; i++) {
-  dataCollectorButtons[i].addEventListener('mousedown', gatherDataForClass);
-  dataCollectorButtons[i].addEventListener('mouseup', gatherDataForClass);
+  dataCollectorButtons[i].addEventListener('mousedown',function(event) {
+    gatherDataForClass.call(this);
+    // Add a global mouseup listener
+    document.addEventListener('mouseup', onGlobalMouseUp);
+  });
   // Populate the human readable names for classes.
   CLASS_NAMES.push(dataCollectorButtons[i].getAttribute('data-name'));
 }
 
 
-/**
- * Handle Data Gather for button mouseup/mousedown.
- **/
+// Handle Data Gather for button mouseup/mousedown.
 function gatherDataForClass() {
   let classNumber = parseInt(this.getAttribute('data-1hot'));
   gatherDataState = (gatherDataState === STOP_DATA_GATHER) ? classNumber : STOP_DATA_GATHER;
   dataGatherLoop();
 }
+function onGlobalMouseUp(event) {
+  // Trigger the same logic as mouseup on the button
+  gatherDataForClass.call(event.target);
+  
+  // Remove the global mouseup listener after handling
+  document.removeEventListener('mouseup', onGlobalMouseUp);
+}
+
+
+// used for sampling image from webcam video and passing it through the model
 function dataGatherLoop() {
   if (videoPlaying && gatherDataState !== STOP_DATA_GATHER) {
     let imageFeatures = tf.tidy(function() {
@@ -140,6 +158,7 @@ function dataGatherLoop() {
 }
 
 
+// adding variables
 let mobilenet = undefined;
 let gatherDataState = STOP_DATA_GATHER;
 let videoPlaying = false;
@@ -149,9 +168,7 @@ let examplesCount = [];
 let predict = false;
 
 
-/**
- * Loads the MobileNet model and warms it up so ready for use.
- **/
+// Loads the MobileNet model and makes it ready for use
 async function loadMobileNetFeatureModel() {
   const URL = 
     'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v3_small_100_224/feature_vector/5/default/1';

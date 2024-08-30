@@ -18,10 +18,6 @@ if (getUserMediaSupported()) {
   console.warn('getUserMedia() is not supported by your browser');
 }
 
-// Placeholder function for next step. Paste over this in the next step.
-function enableCam(event) {
-}
-
 // Enable the live webcam view and start classification.
 function enableCam(event) {
   // Only continue if the COCO-SSD has finished loading.
@@ -41,24 +37,27 @@ function enableCam(event) {
   navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
     video.srcObject = stream;
     video.addEventListener('loadeddata', predictWebcam);
+  }).catch(function(error) {
+    console.error('Error accessing the webcam:', error);
+    alert('Could not access the webcam. Please check if it is connected and allowed to be accessed by the browser.');
   });
 }
 
 // Store the resulting model in the global scope of our app.
-var model = undefined;
+let model = undefined;
 
 // Before we can use COCO-SSD class we must wait for it to finish
 // loading. Machine Learning models can be large and take a moment 
 // to get everything needed to run.
 // Note: cocoSsd is an external object loaded from our index.html
-// script tag import so ignore any warning in Glitch.
+// script tag 
 cocoSsd.load().then(function (loadedModel) {
   model = loadedModel;
   // Show demo section now model is ready to use.
   demosSection.classList.remove('invisible');
 });
 
-var children = [];
+let children = [];
 
 function predictWebcam() {
   // Now let's start classifying a frame in the stream.
