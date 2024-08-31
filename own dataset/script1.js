@@ -45,7 +45,7 @@ function enableCam() {
 }
 
 
-
+// function for training the model
 async function trainAndPredict() {
   predict = false;
 
@@ -126,6 +126,7 @@ function reset() {
 }
 
 
+// collect data using the button
 let dataCollectorButtons = document.querySelectorAll('button.dataCollector');
 for (let i = 0; i < dataCollectorButtons.length; i++) {
   dataCollectorButtons[i].addEventListener('mousedown',function(event) {
