@@ -71,12 +71,11 @@ async function classifyImage() {
 }
 
 function resetImage() {
-    imgEl.src = ''; // Limpia la imagen
-    resultEl.innerHTML = ''; // Limpia las predicciones
-    progressBar.style.width = '0%'; // Restablece la barra de progreso
+    imgEl.src = ''; // Clear the image
+    progressBar.style.width = '0%'; // Clear the progress bar
     progressBar.innerHTML = '0%';
     resultE1.innerHTML = ''; // Clear predictions
 }
 
-// Llama a la función para cargar el modelo al cargar la página.
+// call the function to load the model
 loadModel();
