@@ -48,13 +48,37 @@ function enableCam() {
 
 async function trainAndPredict() {
   predict = false;
+
+  const progressBar = document.getElementById('progress-bar');
+  const progressText = document.getElementById('progress-text');
+  progressBar.style.width = '0%';
+  progressText.innerText = 'Training started...';
+
   tf.util.shuffleCombo(trainingDataInputs, trainingDataOutputs);
   let outputsAsTensor = tf.tensor1d(trainingDataOutputs, 'int32');
   let oneHotOutputs = tf.oneHot(outputsAsTensor, CLASS_NAMES.length);
   let inputsAsTensor = tf.stack(trainingDataInputs);
   
-  let results = await model.fit(inputsAsTensor, oneHotOutputs, {shuffle: true, batchSize: 5, epochs: 10, 
-      callbacks: {onEpochEnd: logProgress} });
+   // Define the total number of epochs
+   const totalEpochs = 10;
+
+   let results = await model.fit(inputsAsTensor, oneHotOutputs, {
+     shuffle: true,
+     batchSize: 5,
+     epochs: totalEpochs, 
+     callbacks: {
+       onEpochEnd: function(epoch, logs) {
+         logProgress(epoch, logs);
+         // Update the progress bar
+         const progress = Math.round(((epoch + 1) / totalEpochs) * 100);
+         progressBar.style.width = `${progress}%`;
+         progressText.innerText = `Training progress: ${progress}%`;
+       },
+       onTrainEnd: function() {
+         progressText.innerText = 'Training completed!';
+       }
+     }
+   });
   
   outputsAsTensor.dispose();
   oneHotOutputs.dispose();
